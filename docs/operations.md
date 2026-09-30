@@ -8,7 +8,7 @@ Backups use a consistent database snapshot. Do not run schema updates during bac
 
 On this Mac, the installed user LaunchAgent `so.badmaal.mis.backup` schedules backup at **03:10 local time**, when the Mac is available. Its definition is in `~/Library/LaunchAgents/so.badmaal.mis.backup.plist`. Output and failures go to private `storage/logs/backup.log` and `backup-error.log`. Reinstall after moving the project with `python3 scripts/schedule-local-backups.py`.
 
-Production needs a cPanel cron job; it is not scheduled by the local LaunchAgent. Configure the hosting PHP binary with an absolute path, for example:
+Production now has a cron job at 03:10 server time using `/usr/local/bin/php /home/badmaal1/mis-badmaal/scripts/backup.php`; it is independent of the local LaunchAgent. For future installations, Configure the hosting PHP binary with an absolute path, for example:
 
 ```cron
 10 3 * * * /HOST/PHP/BINARY /home/CPANELUSER/mis-badmaal/scripts/backup.php >> /home/CPANELUSER/mis-badmaal/storage/logs/backup.log 2>> /home/CPANELUSER/mis-badmaal/storage/logs/backup-error.log

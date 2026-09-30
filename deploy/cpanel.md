@@ -1,6 +1,16 @@
 # Deployment on the existing cPanel server
 
-Status: prepared, not executed. cPanel endpoint supplied by the owner: https://cpanel.badmaal.so/. Browser access was unavailable during implementation. Never put a temporary `/cpsess.../` URL into configuration or source code.
+Status: deployed on 30 September 2026 at **https://mis.badmaal.so/**. Staff login: **https://mis.badmaal.so/login.php**.
+
+- Application root: `/home/badmaal1/mis-badmaal`; document root: its `public/` directory.
+- Independent database: `badmaal1_mis`; scoped runtime user: `badmaal1_misapp` (SELECT, INSERT, UPDATE, DELETE only).
+- Imported the owner's current local MIS snapshot, including 4 approved publications, 4 submissions, 12 submission events, 22 indicator definitions and 112 reporting records. All 15 tables passed exact checksum verification on restore. Current staff account passwords were preserved; local browser sessions were not copied.
+- PHP 8.2.33 with required extensions verified. Let's Encrypt certificate validated; AutoSSL reports renewal enabled with no domain problems. HTTP redirects to HTTPS, with ACME challenges exempted.
+- Private config, storage and Git URLs return 404/403. Anonymous staff dashboard requests redirect to login.
+- Daily encrypted backup installed at 03:10 server time using `/usr/local/bin/php`. A production backup was downloaded and its authentication/checksums verified locally; a private recovery-key copy is retained outside version control. Recurring off-server backup transfer is not configured.
+- Website database and existing website routes were not changed. Website dashboard link cutover is a separate future change.
+
+The instructions below describe the deployment procedure for future environments. Never put cPanel passwords, database secrets or temporary `/cpsess.../` URLs in source control.
 
 ## Domain and TLS
 

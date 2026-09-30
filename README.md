@@ -2,6 +2,13 @@
 
 Independent management information system extracted from the BADMAAL website on 29 September 2026. The MIS has no runtime dependency on website files, database connections, user passwords, roles or sessions.
 
+## Live MIS
+
+- Public dashboard: https://mis.badmaal.so/
+- Staff login: https://mis.badmaal.so/login.php
+- Uses its own `badmaal1_mis` database and database user, separate from the website. The current local MIS data was migrated on 30 September 2026, including the four approved reports. Existing staff credentials are preserved.
+- HTTPS and daily encrypted production backups are enabled. See [deployment status](deploy/cpanel.md).
+
 ## Open locally
 
 - Staff login: http://localhost:8093/login.php
@@ -57,7 +64,7 @@ The test runner creates a uniquely named database, restores a real encrypted bac
 
 ## Current limits
 
-The 12-site catalogue is retained in `config/project-sites.geojson`; site-level entry and aggregation are not yet implemented. Imported baseline/target values and approval history are preserved rather than silently revised. PDO5's measured food-loss baseline remains separate in meaning from its 0% framework reduction baseline; see the PAD review. The staff and public dashboards include reporting coverage charts and target/approved-actual comparisons; the public dashboard also provides fiscal year, type and component filters. The former website's interactive map is not yet included. Production DNS, TLS, scheduled backups, off-server backup transfer and deployment still require cPanel access. No live cutover has been performed.
+The 12-site catalogue is retained in `config/project-sites.geojson`; site-level entry and aggregation are not yet implemented. Imported baseline/target values and approval history are preserved rather than silently revised. PDO5's measured food-loss baseline remains separate in meaning from its 0% framework reduction baseline; see the PAD review. The staff and public dashboards include reporting coverage charts and target/approved-actual comparisons; the public dashboard also provides fiscal year, type and component filters. The former website's interactive map is not yet included. Production DNS, TLS, deployment and daily server backups are configured. Recurring off-server backup transfer remains to be configured; the initial production backup and recovery key have private local copies. The main website dashboard link has not been redirected.
 
 ## Public dashboard checks
 

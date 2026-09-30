@@ -51,13 +51,16 @@ try:
     assert request(officer,'/data-entry.php',{'action':'save_draft'})[0]==403
     _,html,_=request(officer,'/data-entry.php');csrf=token(html)
     indicator=int(re.search(r'<option value="(\d+)"[^>]*data-unit="Number"[^>]*>PDO1 —',html)[1])
+    _,before_draft,_=request(anon,'/?fy=FY26&type=PDO')
+    published_before=dashboard_data(before_draft)['indicators']
     draft={'csrf_token':csrf,'action':'save_draft','entry_module':'indicators','indicator_id':indicator,'fiscal_year':'FY26','reporting_period':'Annual','state':'National','target_value':'11','actual_value':'8','reported_at':'2026-01-01','notes':'Isolated HTTP test evidence'}
     _,bad,_=request(officer,'/data-entry.php',dict(draft,actual_value='0.14'));assert 'whole actual' in bad
     _,review,_=request(officer,'/data-entry.php',draft);assert 'Draft #' in review
     sid=int(re.search(r'Draft #(\d+) saved',review)[1]);csrf=token(review)
     _,review,_=request(officer,'/data-entry.php?module=review',{'csrf_token':csrf,'action':'workflow','submission_id':sid,'decision':'submit'})
     _,pub,_=request(anon,'/?fy=FY26&type=PDO');payload=dashboard_data(pub)
-    assert all(r['result'] is None for r in payload['indicators'])
+    # Existing approved results remain visible; new drafts must not change them.
+    assert payload['indicators']==published_before
     assert len(payload['map']['sitesData']['features'])==12
     assert payload['grmAvailable'] is False
     for module in ['pdo','ir','contracts','finance','grm']:assert 'id="module-'+module+'"' in pub
