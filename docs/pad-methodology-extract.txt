@@ -1,0 +1,406 @@
+        The World Bank
+        Somali Sustainable Fisheries Development Project(P178032)
+
+
+
+                                                              VII. RESULTS FRAMEWORK AND MONITORING
+
+@#&OPS~Doctype~OPS^dynamics@padannexresultframework#doctemplate
+PDO Indicators by PDO Outcomes
+
+   Baseline             Period 1                Period 2               Period 3            Period 4             Period 5           Period 6   Closing Period
+                                                  Climate informed fisheries management plans formulated, and implemented (Number)
+   Climate informed fisheries management plans formulated and implemented (Number)
+   Apr/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2030
+   2                      3                     11                     17                  20                   20                            20
+     ➢Of which Co-management plans in place and operational (Number)
+   Jan/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2030
+   2                      2                     7                      11                  14                   14                            14
+   FMDC meetings (Number)
+   Nov/2023               Jun/2024              Jun/2025               Jun/2026            Jun/2027             Jun/2028           Jun/2029   Jun/2030
+   1                      3                     7                      11                  15                   19                 23         26
+   Fishing communities with improved capacity to benefit (Number)
+   Jan/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2030
+   0                      2                     8                      12                  12                   12                            12
+     ➢Of which at least 25% of beneficiaries are women (Number)
+   Jan/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2030
+   0                      1                     4                      6                   6                    6                             6
+   Project Beneficiaries (direct) (Number)
+   Jan/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2032
+   0                      10000                 35000                  100000              125000               145000                        165000
+     ➢of which are women (Percentage)
+   0                      2                     5                      12                  20                   25                            30
+     ➢of which are Blue economy practitioners with an enhanced capacity to advance inclusion of women (Number)
+   Jan/2024               Jun/2025              Jun/2026               Jun/2027            Jun/2028             Jun/2029                      Jun/2030
+   0                      0                     50                     100                 200                  250                           360
+   Reduction of food loss and waste in targeted value chains (Percentage)
+   Jan/2024               Jun/2027                                                                                                            Jun/2030
+
+
+
+                                                                                                                                                          Page 34 of 61
+
+
+        The World Bank
+        Somali Sustainable Fisheries Development Project(P178032)
+
+
+   0                     2                                                                                                                           5
+
+
+Intermediate Indicators by Components
+
+   Baseline                  Period 1                     Period 2                Period 3                Period 4                Period 5      Closing Period
+                                                Increasing the Capacity of Dependent Communities to Benefit from Sustainable Marine Fisheries
+   Climate resilient infrastructure built or rehabilitated and operational (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           2                          8                       13                      14                      15            15
+   Targeted MSMEs benefitting from implementation of value chain improvement plans (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           5                          15                      40                      70                      100           100
+     ➢Share of targeted MSMEs benefitted from implementation of value chain improvement plans of which owned/led by women (Percentage)
+   0                           0                          6                       10                      17                      20            20
+   Value (USD/kg) increases from improved handling from fisheries under improved management (Percentage)
+   Jun/2024                    Jun/2027                                                                                                         Jun/2030
+   0                           5                                                                                                                10
+                                                                 Strengthening Marine Fisheries Governance and Management
+   Fish stocks with their status determined (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           1                          2                       3                       4                       5             6
+   Co-management arrangements with at-least 10% women participation (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           0                          2                       4                       6                       6             8
+     ➢Of which at least one woman in an executive position in its governance body (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           0                          2                       4                       6                       6             8
+   Patrol days (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           50                         100                     200                     400                     500           760
+   Registers of fishers, fishing vessels and licences developed and operational (Number)
+   Jan/2024                    Jun/2025                   Jun/2026                Jun/2027                Jun/2028                Jun/2029      Jun/2030
+   0                           0                          1                       3                       3                       3             3
+   Fisheries policies, legal and regulatory texts adopted at FGS and FMS levels (Number)
+
+
+                                                                                                                                                                 Page 35 of 61
+
+
+     The World Bank
+     Somali Sustainable Fisheries Development Project(P178032)
+
+
+Jan/2024                    Jun/2025                 Jun/2026                   Jun/2027                   Jun/2028    Jun/2029    Jun/2030
+0                           2                        6                          12                         18          25          34
+Large scale industrial fishing vessels observed conducting serious Illegal activities during patrols (Percentage)
+Dec/2023                    Jun/2027                                                                                               Jun/2030
+No data                     10                                                                                                     20
+Revenue generated from licensing fees annually (Amount(USD))
+Jan/2024                    Jun/2025                 Jun/2026                   Jun/2027                   Jun/2028    Jun/2029    Jun/2030
+1,000,000                   1,000,000                1,500,000                  1,500,000                  2,000,000   2,500,000   3,000,000
+                                                                    Project Management Monitoring and Evaluation
+Beneficiaries with rating ‘Satisfied’ or above on project interventions (Percentage)
+Jan/2024                    Jun/2027                                                                                               Jun/2030
+No data                     35                                                                                                     80
+
+
+
+
+                                                                                                                                               Page 36 of 61
+
+
+        The World Bank
+        Somali Sustainable Fisheries Development Project (P178032)
+
+
+
+              Monitoring & Evaluation Plan: PDO Indicators by PDO Outcomes
+
+Climate-informed fisheries management plans formulated and implemented (Number)
+    •     Of which Co-management plans in place and operational (Number)
+                            This indicator will measure the number of climate-informed fisheries management plans that are formulated
+                            and implemented, including co-management plans, which include measures that can be adapted to climate
+                            driven changes in fish populations or their ecosystems (e.g. seasonal closure, spatial closures, catch limits, etc.).
+                            These plans enable fishers and other stakeholders to adapt to or withstand fluctuations stemming from climate
+                            change (e.g. warming waters). Implementation is the regular actions being taken by officials, fishers, and other
+                            value chain actors consistent with fisheries management plans.
+                            Two co-management agreements are currently in place in Somalia. The project will support the development
+                            and implementation of six fisheries management plans for selected fisheries at FGS and FMS levels, and 12
+                            associated co-management plans. Fisheries co-management is a partnership arrangement in which a community
+                            of local resource users (fishers) and government, with other stakeholders, share the responsibility and authority
+                            for the management of a fishery.
+
+                              Implementation of management plans will be measured by:
+                                  -   Management plans, including effective* management measures, developed in a participatory manner,
+                                      adopted at FGS and/or FMS level
+                                  -   Stakeholders’ awareness raised on adopted management measures
+Description
+                                  -   Initiation of enforcement activities for adopted management measures
+
+                              Implementation of co-management plans will be measured by:
+                                  -   Agreement between authorities and communities, according to the law, in place
+                                  -   Meeting of co-management committees are least twice a year
+                                  -   Local registry of vessels, fishers and gear in place
+
+                              * Effective means that measures should be well informed through available science and aimed at resources
+                              sustainability
+
+                              This indicator will inform PROBLUE Indicator C.8 Fisheries under sustainable management (number) and B.16.
+                              Policies, regulations, strategies, and/or plans informed by PROBLUE (number).
+
+                              This indicator will inform the World Bank Group Scorecard result indicator Millions of hectares of terrestrial and
+                              aquatic areas under enhanced conservation and management which will be tracked by the Client through the
+                              measurement of the areas covered by the management plans.
+Frequency                     Annually
+Data source                   Progress reports
+Methodology for Data          MFBE regular reporting and release of approved management plan
+Collection
+Responsibility for Data       MFBE and relevant FMS
+Collection
+FMDC meetings (Number)
+                              This indicator measures the level of regular policy dialogue and coordination on fisheries governance and
+                              development which will benefit FGS and FMS. The FMDC is a highlevel plateform set up by the 2023 federal
+Description                   fisheries law, which membership includes the Fisheries Minister of the FGS (Chair) and all Fisheries Ministers
+                              from te FMS. FMDC meetings will be concluded by official communiqué which will describe agreed actions for
+                              implementation by the FGS and FMS. The law mandates the FMDC to meet on a quarterly basis.
+Frequency                     Quarterly
+Data source                   FMDC communiqués and progress reports
+Methodology for Data          MFBE regular reporting
+Collection
+
+
+
+
+                                                                                                                                        Page 37 of 61
+
+
+        The World Bank
+        Somali Sustainable Fisheries Development Project (P178032)
+
+
+Responsibility for Data       MFBE
+Collection
+Fishing communities with improved capacity to benefit (Number)
+     •    Of which at least 25% of beneficiaries are women (Number)
+                              At each selected location, for the benefit of the local fishing community, households involved in fishing and
+                              associated activities, this indicator will measure the improvement of the capacity to sustainably benefit through
+                              the provision of a combination of inputs from the project including a) fisheries infrastructure, b) value-chain
+Description                   improvements, c) improved ownership through co-management and d) associated capacity building activities.
+
+                             This indicator will also measure the level at which women participating or who want to enter the sector are
+                             benefitting from project interventions.
+Frequency                    Annually
+Data source                  Surveys, reporting from infrastructure and/or co-management governance body
+Methodology for Data         MFBE regular reporting
+Collection
+Responsibility for Data      MFBE
+Collection
+Beneficiaries (Number), of which are women(Percentage), and of which are Blue Economy practioners (Number)
+                             This indicator measures the number of people who directly benefit from project activities including capacity
+                             building, training, equipment, participation in co-management, and from the establishment and operation of
+                             infrastructure. Beneficiaries will include community members as well as staff from fisheries authorities,
+Description                  including fisheries staff with PROBLUE funded gender training
+                             This will inform PROBLUE Indicator C.1 Beneficiaries (number), of which women (%), and of which from
+                             disadvantaged groups (%) and PROBLUE indicator B.20 Blue economy practitioners with an enhanced capacity
+                             to advance inclusion of women / persons from disadvantaged groups
+Frequency                    Annually
+Data source                  Workshop and training participants list, membership lists, and infrastrucuture user surveys; Progress reporting
+Methodology for Data         MFBE and FMS MoF regular reporting
+Collection
+Responsibility for Data      MFBE and FMS MoF
+Collection
+Reduction of food loss and waste in targetted value chains (Percentage)
+                             This indicator measure the decrease (by weight) in the level of fish loss and waste for targetted value chains
+                             from catch to distribution in Somalia. Methodology is based on FAO’s Food Loss and Waste Assessment
+                             guidance. This indicator will also be a proxy to inform poverty and food insecurity, since reducing food loss and
+                             waste results in more fish to sell and buy which increases incomes, food security, climate change resilience, and
+Description                  fish of better quality and nutritional value. It also informs efficiency in fishing to reduce overexploitation and
+                             maintain robust fish stock and resilience of marine ecosystem. While reports estimates FL&W is estimated to
+                             range between 25% and 40%, a study has been launched under the PPA to determine the baseline. The study
+                             will be repeated at mid-term and towards the end of the project to measure reductoin. It is expected that the
+                             project will contribute to a reudction of five percent from the initial level of FL&W.
+Frequency                    Baseline survey in year 1; mid-term and at closing
+Data source                  Consultants’ reports on Food Loss and Waste and progress reports
+Methodology for Data         MFBE reporting
+Collection
+Responsibility for Data      MFBE
+Collection
+
+
+
+
+                                                                                                                                       Page 38 of 61
+
+
+         The World Bank
+         Somali Sustainable Fisheries Development Project (P178032)
+
+
+
+                          Monitoring & Evaluation Plan: Intermediate Results Indicators by Components
+Monitoring & Evaluation Plan: Intermediate Results Indicators by Components
+
+Component: Increasing the capacity of dependent communities to benefit from sustainable marine fisheries
+Climate informed infrastructure built or rehabilitated and operational (Number)
+                               This indicator measures the number of built or rehabilitated climate-informed infrastructure investments
+                               (landing sites, cold stores, markets, jetties, etc.) that are operational. Operationalization will be supported by
+                               implementation of a business plan and the adoption of a management structure. Climate resilient infrastructure
+Description                    has elements/measures that are adapted to or can withstand fluctuations stemming from climate change (e.g.
+                               storm surges, sea level rise, and flooding). It is expected that the project will support the construction of 12
+                               small-scale fisheries infrastructure facilities, and three more complex infrastructure facilities for landing such as
+                               jetties.
+Frequency                      Anually
+Data source                    Progress reporting
+Methodology for Data           MFBE and FMS MoF regular reporting
+Collection
+Responsibility for Data        MFBE
+Collection
+Targeted MSMEs benefitting from implementation of value chain improvement plans (Number)
+     •    Share of targeted MSMEs benefitted from implementation of value chain improvement plans of which owned/led by women (%)
+                               This indicator measures MSMEs (formal and informal) conducting commercial activities that are provided with
+                               training, capacity building including financial information, equipment and market analyses aligned to value chain
+Description                    improvement plans (or similar). Iimplementation is the regular actions being taken by officials, fishers, and other
+                               value chain actors consistent with value chain improvement plans. This indicator will reflect Private Capital
+                               Enabled (PCE).
+Frequency                      Annually
+Data source                    Progress reporting
+Methodology for Data           MFBE and FMS MoF regular reporting
+Collection
+Responsibility for Data        MFBE
+Collection
+Value (USD/Kg) increases from from improved handling from fisheries under improved management (Percentage)
+                               This indicator will measure the increase in the value (inflation adjusted), i.e. sale price, of fish handled by
+                               beneficiaries of capacity building, training, equipment, participation in co-management and from the
+Description
+                               establishment and operation of infrastructure and implementation of value chain improvement plans, where
+                               the supply stems from fisheries under improved management (fishing activities and related stocks).
+Frequency                      Survey at mid and at closing.
+Data source                    Survey of beneficiaries at targetted infrastructure
+Methodology for Data           MFBE
+Collection
+Responsibility for Data        MFBE
+Collection
+Component 2. Strengthening climate resilient marine fisheries goverance and management
+Fish stocks with their status determined (Number)
+                               This indicator measures the number of targeted fish stocks for which their status has been determined using
+                               qualitative, quantitative or semi-quantitative methods at least once during the course of the project. As fisheries
+                               data and statistics remain scare, data-poor methods are likely to be used. Stock is as defined in the Fisheries
+Description                    Law.
+
+                              This indicator is aligned with the World Bank Group Scorecard following indicator: Proportion of fish stocks
+                              within biologically sustainable levels.
+Frequency                     Annually
+Data source                   Progress reporting
+
+
+
+                                                                                                                                           Page 39 of 61
+
+
+         The World Bank
+         Somali Sustainable Fisheries Development Project (P178032)
+
+
+Methodology for Data            MFBE regular reporting
+Collection
+Responsibility for Data         MFBE
+Collection
+Co-management arrangements with at least 10% women participation , of whichat least one woman is in an executive position in its
+governance body (Number)
+                                This indicator measures the level of meaningful participation and uptake of leadership roles by females involved
+                                in fisheries co-management committees. Committee members have a decision-making role.
+Description
+                                This will inform PROBLUE Indicator C.2. People participating in planning and decision-making on the Blue
+                                Economy (number), of which women (%), of which women in decision-making roles (%)
+Frequency                       Annually
+Data source                     Progress reporting
+Methodology for Data            MFBE and FMS MoF regular reporting
+Collection
+Responsibility for Data         MFBE
+Collection
+Patrol days (Number)
+                                This indicator measures the annual number of days of offshore and coastal surveillance activities (at least 6
+Description
+                                hours of surveillance) each year. Surveilance activities can be conducted from shore, sea or air.
+Frequency                       Annually
+Data source                     Progress reporting
+Methodology for Data            MFBE and FMS MoF regular reporting
+Collection
+Responsibility for Data         MFBE
+Collection
+Registers of fishers, fishing vessels and licences developed and operational (Number)
+                                This indicator measures the development and operationalisation of three registers for fisher, fishing vessels and
+Description                     licensing servicing the FGS and all FMS. Operationalization refers to activities underway to populate or update
+                                the registers consistent with the project Fisheries Information Management System manuals/guides.
+Frequency                       Semi-Annually
+Data source                     Progress reporting
+Methodology for Data            MFBE regular reporting
+Collection
+Responsibility for Data         MFBE
+Collection
+Fisheries policies, legal and regulatory texts adopted at FGS and/or FMS levels (Number)
+                                This indicator measures developed or updated FGS and FMS fisheries policies, laws and regulations to
+                                implement the 2023 Fisheries Act.
+Description
+                                This will inform PROBLUE Indicator B.16 Policies, regulations, strategies, and/or plans informed by PROBLUE
+                                (number)
+Frequency                       Annually
+Data source                     Observations and MFBE and FMS progress reporting
+Methodology for Data            MFBE regular reporting
+Collection
+Responsibility for Data         MFBE
+Collection
+Large scale industrial fishing vessels observed conducting serious Illegal activities during patrols (Percentage)
+                                This indicator measures the level of serious illegal activities related to fishing vessels (licensed or unlicensed) and
+                                their operations detected by inspections, air surveillance, offshore patrols or coastal patrol efforts in Somali
+                                waters. This will be measured as a percentage of the observation of large-scale industrial fishing vessels
+                                observed during patrols. An illegal activity is serious when its fine level is 5 or higher as described in the First
+Description
+                                Schedule of the Fisheries Law. Large-scale industrial fishing vessels includes domestic and foreign vessels
+                                requiring a license to fish outside of the 24 nm boundary for Somali waters as described in the Fisheries Law. A
+                                vessel, observed to be conducting more than one illegal activity in the same observation will only be counted
+                                once. This indicator is expressed as vessels with illegal activities/all vessels observed over one year.
+
+
+                                                                                                                                             Page 40 of 61
+
+
+        The World Bank
+        Somali Sustainable Fisheries Development Project (P178032)
+
+
+                               As there was no patrolling activity before the project, there is no data for baseline
+Frequency                      Annually
+Data source                    Patrol reports and progress reports
+Methodology for Data           MFBE regular reporting
+Collection
+Responsibility for Data
+                               MFBE and relevant FMS
+Collection
+Revenue generated from licensing fees annually (USD) (Amount (USD))
+                               This indicator measures the total revenue generated from fees paid for licences for foreign vessels to fish in
+                               Somalia’s EEZas described in the Fisheries Law (2023).
+Description
+                               Under this indicator, licenses should be published on the MFBE website which will inform PROBLUE Indicator
+                               C.10 on public disclosure of key fisheries-related information
+Frequency                      Annually
+Data source                    Receipt issued for licenses
+Methodology for Data           Review by the Ministry of Finance and the Financial Goernance Committee
+Collection
+Responsibility for Data        MFBE
+Collection
+Project Management
+Beneficiaries with rating ‘Satisfied’ or above on project interventions (Percentage)
+                               This indicator measures the share of the target population expressing satisfaction with the provided project
+Description
+                               interventions
+Frequency                      Mid-term and at closing
+Data source                    Surveys
+Methodology for Data           Surveys
+Collection
+Responsibility for Data        MFBE
+Collection
+
+
+
+
+                                                                                                                                        Page 41 of 61
