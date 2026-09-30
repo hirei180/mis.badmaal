@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "name": "BADMAAL Project Sites",
+  "metadata": {
+    "coordinate_reference": "WGS 84 (EPSG:4326)",
+    "coordinate_status": "Approximate seed coordinates reconstructed from the BADMAAL 2026 print map; validate before operational navigation.",
+    "editable": true
+  },
+  "features": [
+    {"type":"Feature","properties":{"id":"bargaal","name":"Bargaal","state":"Puntland","district":"Bargaal","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[51.077,11.286]}},
+    {"type":"Feature","properties":{"id":"garacad","name":"Garacad","state":"Puntland","district":"Jariban","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[49.33,7.00]}},
+    {"type":"Feature","properties":{"id":"hobyo","name":"Hobyo","state":"Galmudug","district":"Hobyo","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[48.53,5.35]}},
+    {"type":"Feature","properties":{"id":"ceel-huur","name":"Ceel Huur","state":"Galmudug","district":"Hobyo","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[47.62,4.10]}},
+    {"type":"Feature","properties":{"id":"warsheikh","name":"Warsheikh","state":"Hirshabelle","district":"Warsheikh","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[45.80,2.30]}},
+    {"type":"Feature","properties":{"id":"ceel-macaan","name":"Ceel Macaan","state":"Hirshabelle","district":"Balcad","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[45.53,2.05]}},
+    {"type":"Feature","properties":{"id":"lido","name":"Lido","state":"Banadir","district":"Abdiaziz","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[45.35,2.05]}},
+    {"type":"Feature","properties":{"id":"jazeera","name":"Jazeera","state":"South West State","district":"Jazeera","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[45.20,1.96]}},
+    {"type":"Feature","properties":{"id":"merca","name":"Merca","state":"South West State","district":"Merca","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[44.77,1.72]}},
+    {"type":"Feature","properties":{"id":"baraawe","name":"Baraawe","state":"South West State","district":"Baraawe","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[44.03,1.11]}},
+    {"type":"Feature","properties":{"id":"calanley","name":"Calanley","state":"Jubaland","district":"Kismayo","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[42.55,-0.36]}},
+    {"type":"Feature","properties":{"id":"madhwa","name":"Madhwa","state":"Jubaland","district":"Badhaadhe","type":"Fishing Port","status":"Operational","project":"BADMAAL"},"geometry":{"type":"Point","coordinates":[42.10,-1.10]}}
+  ]
+}
