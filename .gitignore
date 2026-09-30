@@ -1,0 +1,9 @@
+config/local.php
+config/operations.php
+storage/*
+!storage/.gitkeep
+*.log
+.DS_Store
+config/backup.key
+__pycache__/
+*.pyc
