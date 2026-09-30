@@ -100,7 +100,7 @@ function misFormEnd():void {echo '<p class="form-note">Saving creates a private 
 <?php if($revision):?><div class="notice">Creating a new draft from submission #<?=(int)$revision['id']?>. The previous submission remains in the history.</div><?php endif;?>
 <?php if($active==='review'): require dirname(__DIR__).'/views/review.php';
 elseif($active==='grm'):?>
-<section class="grm-bridge"><h2>Grievance case management</h2><p>The GRM role is available as a foundation for future development.</p><p>GRM access is reserved for the future case-management module. Existing website cases remain in the website until a dedicated migration is agreed.</p></section>
+<section class="grm-bridge"><h2>Grievance case management</h2><p>Review migrated cases, category links, responses and private evidence in the independent MIS.</p><a href="/grievances.php">Open GRM cases →</a></section>
 <?php else:?>
 <?php if($active==='indicators'):?>
 <form method="get" class="framework-filters records-card filters"><input type="hidden" name="module" value="indicators">

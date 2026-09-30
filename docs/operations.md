@@ -4,7 +4,7 @@
 
 `php scripts/backup.php` creates an AES-256-GCM authenticated, compressed database backup under `storage/backups`. It includes all MIS tables, account hashes, settings, migration records, and historical audit records. The backup key is a 32-byte private file at `config/backup.key`; overrides are `MIS_BACKUP_KEY_FILE` and `MIS_BACKUP_DIR`. Neither the key nor backups are in source releases or version control.
 
-Backups use a consistent database snapshot. Do not run schema updates during backup. This initial app has no uploaded evidence files; evidence is text/reference data in the database. If file attachments are introduced later, add coordinated file backups before enabling them. Source releases and server configuration must also be retained separately for full disaster recovery.
+Backups use a consistent database snapshot. Do not run schema updates during backup. Backups now include the 11 migrated private GRM evidence files, together with their metadata and SHA-256 checksums. Backup aborts if a referenced file is missing or changed. Restores require a separate empty evidence directory and validate every recovered file. Source releases and server configuration must also be retained separately for full disaster recovery.
 
 On this Mac, the installed user LaunchAgent `so.badmaal.mis.backup` schedules backup at **03:10 local time**, when the Mac is available. Its definition is in `~/Library/LaunchAgents/so.badmaal.mis.backup.plist`. Output and failures go to private `storage/logs/backup.log` and `backup-error.log`. Reinstall after moving the project with `python3 scripts/schedule-local-backups.py`.
 
@@ -23,12 +23,12 @@ Confirm the actual hosting PHP path and server timezone. Check successful backup
 3. Run:
 
 ```sh
-php scripts/restore.php --file=/private/path/backup.backup --database=EMPTY_RECOVERY_DATABASE
+php scripts/restore.php --file=/private/path/backup.backup --database=EMPTY_RECOVERY_DATABASE --evidence-dir=/private/empty-recovery-evidence
 ```
 
 The restore refuses the configured running database and any nonempty target, authenticates the backup, creates tables in dependency order with foreign-key checks enabled, inserts original rows, and compares every table's checksum. An interrupted restore can leave schema objects in the recovery DB; discard that **recovery** DB and retry into a new empty one. Never point this command at the website database.
 
-4. Check user access, draft/review history and approved public output in isolation. Reconfigure `config/local.php` to use the validated recovered database with a scoped runtime account. Clear private session files to require fresh logins. Switch traffic only after validation. Record the incident and restore result.
+4. Check user access, draft/review history and approved public output in isolation. Reconfigure `config/local.php` to use the validated recovered database with a scoped runtime account. Move the verified recovery evidence directory to the recovered application’s `storage/grm-evidence` path before serving it. Clear private session files to require fresh logins. Switch traffic only after validation. Record the incident and restore result.
 
 Restore was tested on 29 September 2026: 15 tables, matching counts and exact row checksums, intact foreign-key relationships, rejection of damaged ciphertext and refusal to overwrite a populated database. Production recovery time and off-server recovery remain to be measured on the host.
 
@@ -43,3 +43,5 @@ Before changes: back up the DB, retain the previous source archive, run integrat
 Local Apache writes independent `storage/logs/access.log` and `apache-error.log`. Application errors write `application.log`; logins and administrative changes go to `audit_logs`; reporting decisions go to `mis_submission_events`. The UI presents current MIS and imported website audit history separately. No log should contain raw passwords.
 
 In cPanel, enable/retain the MIS subdomain access logs and include them in the host's log rotation. Restrict private directories to the application/operator account. Disable departing staff through Users, which invalidates their existing sessions. Role permission changes also revoke existing sessions. Review admin access and pending approvals routinely; self-approval is denied by the service, not merely hidden in the UI.
+
+GRM recovery verification on 30 September 2026: all 18 tables and 11 private evidence files restored with matching checksums. New backups include evidence bytes inside the encrypted archive; the encryption key still must be held separately.

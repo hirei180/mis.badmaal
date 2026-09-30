@@ -1,5 +1,5 @@
 """Run against an isolated restored database. Never changes local MIS or website records."""
-import json, os, pathlib, re, subprocess, time, urllib.request, urllib.parse, urllib.error, http.cookiejar, tempfile, shutil
+import json, os, pathlib, re, subprocess, time, urllib.request, urllib.parse, urllib.error, http.cookiejar, tempfile, shutil, hashlib
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 fixture=json.loads((ROOT/'storage/test-fixture.json').read_text())
 base='http://127.0.0.1:8094'
@@ -7,6 +7,7 @@ env=os.environ.copy();env.update(MIS_DB_NAME=fixture['database'],MIS_DB_HOST=fix
 runtime=tempfile.mkdtemp(prefix='mis-http-')
 for d in ['sessions','logs']:(pathlib.Path(runtime)/d).mkdir()
 env['MIS_STORAGE_DIR']=runtime
+if pathlib.Path(fixture.get('evidence_dir','/nonexistent')).is_dir():shutil.copytree(fixture['evidence_dir'],pathlib.Path(runtime)/'grm-evidence')
 log=open(ROOT/'storage/logs/test-http.log','w')
 server=subprocess.Popen(['php','-S','127.0.0.1:8094','-t',str(ROOT/'public')],env=env,stdout=log,stderr=log)
 def client():return urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
@@ -46,6 +47,24 @@ try:
     assert request(proc,'/data-entry.php?module=contracts')[0]==200
     assert request(grm,'/data-entry.php?module=grm')[0]==200
     assert request(grm,'/data-entry.php?module=indicators')[0]==403
+    assert request(grm,'/grievances.php')[0]==200
+    assert request(admin,'/grievances.php')[0]==200
+    for restricted in [officer,proc]:
+        assert request(restricted,'/grievances.php')[0]==403
+        assert request(restricted,'/grm-evidence.php?id=1')[0]==403
+    assert '/login.php' in request(anon,'/grievances.php')[2]
+    code,unknown,_=request(anon,'/storage/grm-evidence/')
+    assert code in (403,404) or 'id="dashboard-data"' in unknown # PHP dev server may fall back to public index.
+    evidence_files=list(pathlib.Path(fixture['evidence_dir']).iterdir())
+    assert len(evidence_files)==11
+    for evidence in evidence_files:
+        case_id=evidence.name.split('-')[0]
+        assert request(grm,'/grievances.php?id='+case_id)[0]==200
+        with grm.open(base+'/grm-evidence.php?id='+case_id) as download:
+            assert download.status==200 and download.headers['Content-Type']=='application/octet-stream'
+            assert 'attachment;' in download.headers['Content-Disposition']
+            assert hashlib.sha256(download.read()).hexdigest()==evidence.name.split('-',1)[1]
+        assert request(officer,'/grm-evidence.php?id='+case_id)[0]==403
     _,html,_=request(officer,'/data-entry.php?filter_fiscal_year=FY27&filter_component=Component+1&filter_indicator_type=IR')
     body=re.search(r'<tbody>(.*?)</tbody>',html,re.S)[1];assert 'FY27' in body and 'FY26' not in body and 'PDO1' not in body
     assert request(officer,'/data-entry.php',{'action':'save_draft'})[0]==403
@@ -62,7 +81,11 @@ try:
     # Existing approved results remain visible; new drafts must not change them.
     assert payload['indicators']==published_before
     assert len(payload['map']['sitesData']['features'])==12
-    assert payload['grmAvailable'] is False
+    assert payload['grmAvailable'] is True
+    assert payload['grm']['total']==19
+    assert payload['grm']['resolved']==0 and payload['grm']['pending']==19
+    assert sum(payload['grmSegments']['categories'].values())==94
+    for private_field in ['complainant_name','email','phone','evidence_path','review_comments']:assert private_field not in payload['grm']
     for module in ['pdo','ir','contracts','finance','grm']:assert 'id="module-'+module+'"' in pub
     _,denied,_=request(officer,'/data-entry.php?module=review',{'csrf_token':csrf,'action':'workflow','submission_id':sid,'decision':'approve'})
     assert 'different authorized reviewer' in denied
@@ -104,3 +127,4 @@ finally:
     subprocess.run(['php','-r',cleanup,str(ROOT/'storage/test-fixture.json')],check=True)
     (ROOT/'storage/test-fixture.json').unlink()
     shutil.rmtree(runtime)
+    if fixture.get('evidence_dir'):shutil.rmtree(fixture['evidence_dir'],ignore_errors=True)

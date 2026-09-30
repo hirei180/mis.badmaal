@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/bootstrap.php';
+ini_set('log_errors','1');
+ini_set('error_log',MIS_STORAGE.'/logs/application.log');
 use App\Core\Database;
 $local=is_file(MIS_ROOT.'/config/local.php')?require MIS_ROOT.'/config/local.php':[];
 $secure=!empty($_SERVER['HTTPS'])&&$_SERVER['HTTPS']!=='off';
@@ -41,6 +43,7 @@ function audit(string $action,array $details=[],?int $entityId=null):void {
 }
 function nav(string $active=''):void {
  $items=['dashboard.php'=>'Dashboard','data-entry.php'=>'Data Entry','data-entry.php?module=review'=>'Approvals'];
+ if(hasAnyPermission(['grm.view']))$items['grievances.php']='GRM cases';
  if(hasAnyPermission(['users.manage']))$items['users.php']='Users';
  if(hasAnyPermission(['roles.manage']))$items['roles.php']='Roles';
  if(hasAnyPermission(['settings.manage']))$items['settings.php']='Settings';

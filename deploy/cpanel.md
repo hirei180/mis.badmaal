@@ -26,8 +26,9 @@ The instructions below describe the deployment procedure for future environments
 4. Create `config/local.php` from the example: production environment, `https://mis.badmaal.so`, and the MIS database credentials. Keep it private/readable only by the application account. The application's public directory must contain no credentials or database exports.
 5. Freeze website MIS writes, take a website backup, and import the **live** source into the empty MIS database. Run the importer on the server with `--source-config` pointing to the real website database config and `--target=CPANELUSER_mis`. Use `MIS_IMPORT_TARGET_USER`, `MIS_IMPORT_TARGET_PASS`, and optionally `MIS_IMPORT_TARGET_HOST` / `MIS_IMPORT_TARGET_PORT` for independent target migration credentials. Do not use the local-only `--provision` option on cPanel. Configure secrets through private files/session environment, not shared command history.
 6. Check the migration manifest against the live source and verify publication markers, workflow events and actor references. Historical users are disabled attribution identities. Pending legacy drafts cannot be resubmitted by new identities automatically; settle the old queue before cutover or agree an explicit transfer policy. No historical authorship is silently reassigned.
-7. Retrieve the two fresh initial credentials from the private file, change both passwords, and record actual staff names/emails through Users. Website credentials must fail on MIS. Remove the initial credential file after secure handoff.
-8. Run the deployment checks below, install the independent backup job and arrange an off-server copy of encrypted backups **and a separately protected recovery key**. Only then change the deployed website dashboard redirect to `https://mis.badmaal.so/index.php`. Keep website and MIS releases independent.
+7. Run the separate `scripts/migrate-grm.php --source-root=/path/to/live/website` migration after the initial import and verify the case/category/evidence manifest. Do not expose evidence storage under the domain document root. The source is retained and there is no automatic sync of subsequent submissions; agree the live intake cutover before making the website read-only or retiring its intake.
+8. Retrieve the two fresh initial credentials from the private file, change both passwords, and record actual staff names/emails through Users. Website credentials must fail on MIS. Remove the initial credential file after secure handoff.
+9. Run the deployment checks below, install the independent backup job and arrange an off-server copy of encrypted backups **and a separately protected recovery key**. Only then change the deployed website dashboard redirect to `https://mis.badmaal.so/index.php`. Keep website and MIS releases independent.
 
 ## Checks before switching the public link
 
@@ -39,3 +40,10 @@ The instructions below describe the deployment procedure for future environments
 - Website link redirects to the MIS public results, and Staff Login leads to the MIS login. Never forward website session cookies or implement shared sessions.
 
 The same hosting server can serve both apps. Separate application credentials do not by themselves isolate two apps from a compromised shared Unix/cPanel account. A separate cPanel account under the same server provides a stronger filesystem boundary if the hosting plan supports it.
+
+
+## GRM production deployment and recovery — 1 October 2026
+
+GRM is deployed at `https://mis.badmaal.so/?module=grm`. The protected register is `/grievances.php`. The selective migration added 19 cases, 94 category links and 11 evidence files; row checksums and all evidence hashes were verified. The existing 22 indicator definitions and 4 approved publications remain present. MIS Administrator and GRM Officer have case/evidence access; the public dashboard exposes aggregate counts only.
+
+The live dashboard subsequently reported a MySQL authentication failure for its dedicated application user. Synchronizing that user's password restored PDO, IR and GRM data loading. Runtime privileges were returned to SELECT, INSERT, UPDATE and DELETE only. PHP errors now go to private storage, and `error_log` is blocked from HTTP access. A fresh encrypted production backup includes the GRM evidence files. Temporary migration snapshots and their key were removed from the server.

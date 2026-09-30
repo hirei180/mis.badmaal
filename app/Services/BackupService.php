@@ -20,7 +20,14 @@ final class BackupService
    }
    $pdo->commit();
   }catch(\Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
-  $payload=gzencode(json_encode(['format'=>1,'created_at'=>gmdate('c'),'tables'=>$data],JSON_THROW_ON_ERROR),9);
+  $files=[];
+  foreach($data['grm_evidence_files']['rows']??[] as $row){
+   $name=$row['storage_name'];if(!preg_match('/^\d+-[a-f0-9]{64}$/',$name))throw new RuntimeException('Invalid evidence name.');
+   $path=MIS_STORAGE.'/grm-evidence/'.$name;
+   if(!is_file($path)||is_link($path)||hash_file('sha256',$path)!==$row['sha256'])throw new RuntimeException('Evidence missing or changed; backup aborted.');
+   $files[$name]=['sha256'=>$row['sha256'],'data'=>base64_encode(file_get_contents($path))];
+  }
+  $payload=gzencode(json_encode(['format'=>2,'created_at'=>gmdate('c'),'tables'=>$data,'evidence_files'=>$files],JSON_THROW_ON_ERROR),9);
   $iv=random_bytes(12);$tag='';$cipher=openssl_encrypt($payload,'aes-256-gcm',$key,OPENSSL_RAW_DATA,$iv,$tag,'BADMAAL-MIS-v1');
   if($cipher===false)throw new RuntimeException('Encryption failed.');
   $envelope=json_encode(['format'=>'BADMAAL-MIS-v1','iv'=>base64_encode($iv),'tag'=>base64_encode($tag),'data'=>base64_encode($cipher)],JSON_THROW_ON_ERROR);
@@ -35,10 +42,23 @@ final class BackupService
   if($plain===false)throw new RuntimeException('Backup authentication failed (wrong key or damaged backup).');
   $payload=json_decode(gzdecode($plain),true,512,JSON_THROW_ON_ERROR);
   foreach($payload['tables'] as $name=>$t){if(!preg_match('/^[a-zA-Z0-9_]+$/',$name)||count($t['rows'])!==$t['count']||self::rowHash($t['rows'])!==$t['sha256'])throw new RuntimeException('Backup content verification failed.');}
+  $files=$payload['evidence_files']??[];
+  if(count($files)!==count($payload['tables']['grm_evidence_files']['rows']??[]))throw new RuntimeException('Evidence manifest count mismatch.');
+  foreach($payload['tables']['grm_evidence_files']['rows']??[] as $row){
+   $name=$row['storage_name'];$file=$files[$name]??null;
+   if(!preg_match('/^\d+-[a-f0-9]{64}$/',$name)||!$file||$file['sha256']!==$row['sha256'])throw new RuntimeException('Invalid evidence manifest.');
+   $bytes=base64_decode($file['data'],true);
+   if($bytes===false||strlen($bytes)!==(int)$row['byte_size']||hash('sha256',$bytes)!==$row['sha256'])throw new RuntimeException('Evidence checksum mismatch.');
+  }
   return $payload;
  }
- public static function restore(PDO $target,array $payload):array {
+ public static function restore(PDO $target,array $payload,?string $evidenceDirectory=null):array {
   if($target->query('SHOW TABLES')->fetch())throw new RuntimeException('Restore requires an empty target database.');
+  $files=$payload['evidence_files']??[];$written=[];
+  if($files){
+   if(!$evidenceDirectory||is_link($evidenceDirectory)||(is_dir($evidenceDirectory)&&count(scandir($evidenceDirectory))>2))throw new RuntimeException('Restore requires a separate empty evidence directory.');
+   if(!is_dir($evidenceDirectory)&&!mkdir($evidenceDirectory,0700,true))throw new RuntimeException('Cannot create recovery evidence directory.');
+  }
   // Topological schema creation keeps foreign-key checks enabled throughout import.
   $pending=$payload['tables'];$created=[];
   while($pending){$progress=false;
@@ -56,8 +76,14 @@ final class BackupService
    $actual=$target->query("SELECT * FROM `$name`")->fetchAll(PDO::FETCH_ASSOC);
    if(self::rowHash($actual)!==$table['sha256'])throw new RuntimeException("Restored checksum mismatch: $name");$counts[$name]=count($actual);
    }
+   foreach($files as $name=>$file){
+    if(!preg_match('/^\d+-[a-f0-9]{64}$/',$name))throw new RuntimeException('Unsafe evidence path.');
+    $bytes=base64_decode($file['data'],true);if($bytes===false||hash('sha256',$bytes)!==$file['sha256'])throw new RuntimeException('Invalid evidence bytes.');
+    $path=$evidenceDirectory.'/'.$name;$written[]=$path;
+    if(file_put_contents($path,$bytes,LOCK_EX)!==strlen($bytes)||hash_file('sha256',$path)!==$file['sha256'])throw new RuntimeException('Evidence restore failed.');chmod($path,0600);
+   }
    $target->commit();return $counts;
-  }catch(\Throwable $e){if($target->inTransaction())$target->rollBack();throw $e;}
+  }catch(\Throwable $e){if($target->inTransaction())$target->rollBack();foreach($written as $path)if(is_file($path))unlink($path);throw $e;}
  }
  public static function rowHash(array $rows):string {
   $encoded=array_map(static function($row){ksort($row);return json_encode($row,JSON_THROW_ON_ERROR);},$rows);sort($encoded,SORT_STRING);return hash('sha256',implode("\n",$encoded));
