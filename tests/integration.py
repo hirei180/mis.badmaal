@@ -49,7 +49,7 @@ try:
     assert request(grm,'/data-entry.php?module=indicators')[0]==403
     assert request(grm,'/grievances.php')[0]==200
     assert request(admin,'/grievances.php')[0]==200
-    for restricted in [officer,proc]:
+    for restricted in [proc]:
         assert request(restricted,'/grievances.php')[0]==403
         assert request(restricted,'/grm-evidence.php?id=1')[0]==403
     assert '/login.php' in request(anon,'/grievances.php')[2]
@@ -64,7 +64,8 @@ try:
             assert download.status==200 and download.headers['Content-Type']=='application/octet-stream'
             assert 'attachment;' in download.headers['Content-Disposition']
             assert hashlib.sha256(download.read()).hexdigest()==evidence.name.split('-',1)[1]
-        assert request(officer,'/grm-evidence.php?id='+case_id)[0]==403
+        with officer.open(base+'/grm-evidence.php?id='+case_id) as download:
+            assert download.status==200
     _,html,_=request(officer,'/data-entry.php?filter_fiscal_year=FY27&filter_component=Component+1&filter_indicator_type=IR')
     body=re.search(r'<tbody>(.*?)</tbody>',html,re.S)[1];assert 'FY27' in body and 'FY26' not in body and 'PDO1' not in body
     assert request(officer,'/data-entry.php',{'action':'save_draft'})[0]==403
@@ -114,6 +115,24 @@ try:
     assert 'saved=1' in url and '/login.php' in request(fresh,'/dashboard.php')[2]
     _,blocked,_=request(admin,'/users.php',dict(new_user,id=1,username='legacy.try'))
     assert 'Historical attribution records cannot become login accounts' in blocked
+    # M&E GRM entry, validation, aggregate updates, privacy and concurrent-edit protection.
+    assert request(proc,'/grm-entry.php')[0]==403
+    assert request(proc,'/grm-entry.php',{'subject':'unauthorized'})[0]==403
+    _,entry,_=request(officer,'/grm-entry.php');grm_csrf=token(entry)
+    case_data={'csrf_token':grm_csrf,'subject':'Private GRM integration case','description':'Confidential grievance description','status':'received','priority':'high','categories':'Test category','people_affected':'2','incident_date':'2026-01-01','email':'','response':''}
+    assert request(officer,'/grm-entry.php',dict(case_data,csrf_token='invalid'))[0]==403
+    _,bad,_=request(officer,'/grm-entry.php',dict(case_data,incident_date='2026-02-30'));assert 'valid incident date' in bad
+    _,bad,_=request(officer,'/grm-entry.php',dict(case_data,people_affected='1.2'));assert 'whole number' in bad
+    _,saved,url=request(officer,'/grm-entry.php',case_data);assert 'saved=1' in url and 'Case saved successfully' in saved
+    case_id=int(re.search(r'id=(\d+)',url)[1])
+    _,entry,_=request(officer,'/grm-entry.php?id='+str(case_id));revision=re.search(r'name="revision" value="([^"]+)"',entry)[1]
+    update=dict(case_data,revision=revision,status='resolved',response='Private resolution')
+    _,saved,url=request(officer,'/grm-entry.php?id='+str(case_id),update);assert 'saved=1' in url
+    _,stale,_=request(officer,'/grm-entry.php?id='+str(case_id),dict(update,status='closed'));assert 'changed after you opened' in stale
+    _,pub,_=request(anon,'/?module=grm');grm_payload=dashboard_data(pub)
+    assert grm_payload['grm']['total']==20 and grm_payload['grm']['resolved']==1
+    assert 'Private GRM integration case' not in pub and 'Private resolution' not in pub and 'Confidential grievance description' not in pub
+    _,history,_=request(admin,'/audit.php');assert 'grm_case_created' in history and 'grm_case_updated' in history
     _,settings_html,_=request(admin,'/settings.php')
     _,_,url=request(admin,'/settings.php',{'csrf_token':token(settings_html),'organisation':'Isolated MIS','support_email':'','session_minutes':45})
     assert 'saved=1' in url

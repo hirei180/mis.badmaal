@@ -29,7 +29,7 @@ This adds the local hosts entry and gracefully reloads the existing Homebrew Apa
 ## What is included
 
 - Independent database (`badmaal_mis` locally), DB user with no website DB access, host-only MIS session cookie, password changes, throttled login, CSRF protection, inactivity expiry and session revocation.
-- MIS Administrator and M&E Officer roles. Both can enter indicator results and review another user's submissions. Procurement and Finance retain basic entry modules; GRM provides a protected, read-only case register with migrated categories, responses, historical attribution and private evidence downloads. MIS Administrator and GRM Officer can access it.
+- MIS Administrator and M&E Officer roles. Both can enter indicator results and review another user's submissions. Procurement and Finance retain basic entry modules; GRM provides a protected case register with audited entry and editing with migrated categories, responses, historical attribution and private evidence downloads. MIS Administrator, M&E Officer and GRM Officer can access it.
 - Users, role permissions, settings and audit history managed inside MIS. Imported historical website identities are permanently excluded from authentication and activation.
 - Filtered PDO/IR entry and reporting: FY, component, type, state, period; natural indicator sorting; count/percentage/currency input hints and validation. Approvals publish to the original public dashboard, transferred into this repository on 30 September 2026.
 - Encrypted backups, a tested restore into an empty database, a local daily backup job, separate HTTP/application logs, and source-only release packaging.
@@ -80,6 +80,13 @@ The HTTP integration suite checks draft isolation and approval publication throu
 
 Migrated 19 grievances, 94 category links and 11 evidence files from the local website. Record and file checksums matched; original IDs, timestamps, comments, responses and staff references were retained. The 14 associated historical audit entries were verified against the existing imported archive. Source records/files were left unchanged.
 
-Public GRM: `http://localhost:8093/?module=grm`. Protected register: `/grievances.php`, available only to MIS Administrator / GRM Officer (or roles explicitly granted `grm.view`). Evidence is outside the document root in `storage/grm-evidence` and is downloaded through an authenticated, audited attachment endpoint. Personal case details never enter the public dashboard payload.
+Public GRM: `http://localhost:8093/?module=grm`. Protected register: `/grievances.php`, available only to MIS Administrator / M&E Officer / GRM Officer (or roles explicitly granted `grm.view`). Evidence is outside the document root in `storage/grm-evidence` and is downloaded through an authenticated, audited attachment endpoint. Personal case details never enter the public dashboard payload.
 
 `php scripts/migrate-grm.php --source-root=/path/to/website` performs a one-time migration into the configured MIS DB. It needs an operator with schema privileges (`MIS_MIGRATION_USER` / `MIS_MIGRATION_PASS`), refuses populated GRM targets, checks historical user identities and refuses conflicts, creates a pre-migration encrypted backup, and verifies record/file checksums. The private manifest is `storage/grm-migration-manifest.json`. It is a snapshot migration, not a recurring sync. Repeat from the live source during cPanel cutover rather than assuming local data equals production.
+
+
+## GRM case entry
+
+M&E Officer can create cases and edit existing cases through **GRM cases → New GRM case / Edit case**. The `grm.manage` permission enables writing; `grm.view` is also required. `php scripts/enable-grm-entry.php` adds these permissions to MIS Administrator, M&E Officer and GRM Officer without changing other role grants. The migration is safe to rerun and uses only normal application database privileges.
+
+Case saves validate input and CSRF, reject stale edits, preserve original attribution/evidence and store before/after records in the private audit history. Existing cases remain editable, including those already reflected in public counts. GRM has no separate publication-approval workflow: status, priority and category summary counts update immediately. Personal details and responses remain private. This form does not replace existing evidence or provide new attachment uploads.
