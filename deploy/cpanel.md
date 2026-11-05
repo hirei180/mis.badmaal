@@ -47,3 +47,15 @@ The same hosting server can serve both apps. Separate application credentials do
 GRM is deployed at `https://mis.badmaal.so/?module=grm`. The protected register is `/grievances.php`. The selective migration added 19 cases, 94 category links and 11 evidence files; row checksums and all evidence hashes were verified. The existing 22 indicator definitions and 4 approved publications remain present. MIS Administrator and GRM Officer have case/evidence access; the public dashboard exposes aggregate counts only.
 
 The live dashboard subsequently reported a MySQL authentication failure for its dedicated application user. Synchronizing that user's password restored PDO, IR and GRM data loading. Runtime privileges were returned to SELECT, INSERT, UPDATE and DELETE only. PHP errors now go to private storage, and `error_log` is blocked from HTTP access. A fresh encrypted production backup includes the GRM evidence files. Temporary migration snapshots and their key were removed from the server.
+
+## Procurement and GRM register forms — 5 November 2026
+
+Deployed the changed form, service, repository, role configuration and migration files to the live MIS. Each existing source file matched the local base revision before replacement; uploaded and installed file checksums were verified. The private deployment directory is `/home/badmaal1/mis-deployment-20261105-registers`, with the previous source archive and deployment manifest.
+
+The additive migration added procurement category/status and GRM gender, contact, site/location, grievance type, assigned officer, receipt date and resolution date. Runtime ALTER access was used only during migration and the original SELECT/INSERT/UPDATE/DELETE privileges were restored and verified. All original contract and grievance column values matched the authenticated predeployment backup (0 contracts, 19 cases). No local database snapshot or credentials were deployed.
+
+The production encrypted backup is `storage/backups/mis-20261105-113414-607f79.backup`. Its authentication and content checksums were verified before deployment. The new hosting IP is `86.104.14.110`; the SSH ED25519 fingerprint was independently checked through the owner's authenticated cPanel terminal before SSH deployment.
+
+Public dashboard and login return HTTP 200; anonymous form/register access redirects to login; private configuration and backup paths return HTTP 404.
+
+MIS Administrator now has procurement draft-entry permission; existing self-approval protection remains in force. Private rendering checks use existing authorized entry accounts, with isolated QA sessions.

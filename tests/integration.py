@@ -115,22 +115,39 @@ try:
     assert 'saved=1' in url and '/login.php' in request(fresh,'/dashboard.php')[2]
     _,blocked,_=request(admin,'/users.php',dict(new_user,id=1,username='legacy.try'))
     assert 'Historical attribution records cannot become login accounts' in blocked
+    assert 'name="category"' in request(admin,'/data-entry.php?module=contracts')[1]
+    # Procurement template fields survive draft, approval and reopening.
+    _,entry,_=request(proc,'/data-entry.php?module=contracts')
+    contract={'csrf_token':token(entry),'action':'save_draft','entry_module':'contracts','reference_no':'TEST-PROC-001','title':'Template procurement','component':'Component 1','state':'Somaliland','contractor':'','contract_value':'1500.50','paid_amount':'0','progress_percent':'0','status':'planned','category':'Goods','procurement_status':'Under Evaluation','start_date':'','end_date':'','notes':''}
+    _,bad,_=request(proc,'/data-entry.php?module=contracts',dict(contract,category='Invalid'));assert 'valid category' in bad
+    _,drafts,url=request(proc,'/data-entry.php?module=contracts',contract)
+    assert 'module=review' in url and 'Under Evaluation' in drafts and 'Goods' in drafts
+    submission=re.search(r'name="submission_id" value="(\d+)"',drafts)[1]
+    request(proc,'/data-entry.php?module=review',{'csrf_token':token(drafts),'action':'workflow','submission_id':submission,'decision':'submit'})
+    _,review,_=request(admin,'/data-entry.php?module=review')
+    request(admin,'/data-entry.php?module=review',{'csrf_token':token(review),'action':'workflow','submission_id':submission,'decision':'approve'})
+    _,records,_=request(proc,'/data-entry.php?module=contracts')
+    assert 'Template procurement' in records and 'Goods / Under Evaluation' in records
     # M&E GRM entry, validation, aggregate updates, privacy and concurrent-edit protection.
     assert request(proc,'/grm-entry.php')[0]==403
     assert request(proc,'/grm-entry.php',{'subject':'unauthorized'})[0]==403
     _,entry,_=request(officer,'/grm-entry.php');grm_csrf=token(entry)
-    case_data={'csrf_token':grm_csrf,'subject':'Private GRM integration case','description':'Confidential grievance description','status':'received','priority':'high','categories':'Test category','people_affected':'2','incident_date':'2026-01-01','email':'','response':''}
+    case_data={'csrf_token':grm_csrf,'subject':'Private GRM integration case','description':'Confidential grievance description','status':'received','priority':'high','categories':'Test category','people_affected':'2','incident_date':'2026-01-01','email':'','response':'','date_received':'2026-01-01','gender':'Female','contact':'Private contact','site_location':'Private site','grievance_type':'Service Delivery','assigned_to':'Case officer'}
     assert request(officer,'/grm-entry.php',dict(case_data,csrf_token='invalid'))[0]==403
     _,bad,_=request(officer,'/grm-entry.php',dict(case_data,incident_date='2026-02-30'));assert 'valid incident date' in bad
     _,bad,_=request(officer,'/grm-entry.php',dict(case_data,people_affected='1.2'));assert 'whole number' in bad
     _,saved,url=request(officer,'/grm-entry.php',case_data);assert 'saved=1' in url and 'Case saved successfully' in saved
     case_id=int(re.search(r'id=(\d+)',url)[1])
     _,entry,_=request(officer,'/grm-entry.php?id='+str(case_id));revision=re.search(r'name="revision" value="([^"]+)"',entry)[1]
-    update=dict(case_data,revision=revision,status='resolved',response='Private resolution')
+    assert all(value in entry for value in ['Private contact','Private site','Service Delivery','Case officer','2026-01-01'])
+    _,bad,_=request(officer,'/grm-entry.php',dict(case_data,date_resolved='2025-12-31',status='resolved'));assert 'on or after' in bad
+    _,bad,_=request(officer,'/grm-entry.php',dict(case_data,status='resolved'));assert 'Enter the date resolved' in bad
+    update=dict(case_data,revision=revision,status='resolved',response='Private resolution',date_resolved='2026-01-03')
     _,saved,url=request(officer,'/grm-entry.php?id='+str(case_id),update);assert 'saved=1' in url
     _,stale,_=request(officer,'/grm-entry.php?id='+str(case_id),dict(update,status='closed'));assert 'changed after you opened' in stale
     _,pub,_=request(anon,'/?module=grm');grm_payload=dashboard_data(pub)
     assert grm_payload['grm']['total']==20 and grm_payload['grm']['resolved']==1
+    assert 'Private contact' not in pub and 'Private site' not in pub
     assert 'Private GRM integration case' not in pub and 'Private resolution' not in pub and 'Confidential grievance description' not in pub
     _,history,_=request(admin,'/audit.php');assert 'grm_case_created' in history and 'grm_case_updated' in history
     _,settings_html,_=request(admin,'/settings.php')

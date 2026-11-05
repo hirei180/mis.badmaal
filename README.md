@@ -90,3 +90,11 @@ Public GRM: `http://localhost:8093/?module=grm`. Protected register: `/grievance
 M&E Officer can create cases and edit existing cases through **GRM cases → New GRM case / Edit case**. The `grm.manage` permission enables writing; `grm.view` is also required. `php scripts/enable-grm-entry.php` adds these permissions to MIS Administrator, M&E Officer and GRM Officer without changing other role grants. The migration is safe to rerun and uses only normal application database privileges.
 
 Case saves validate input and CSRF, reject stale edits, preserve original attribution/evidence and store before/after records in the private audit history. Existing cases remain editable, including those already reflected in public counts. GRM has no separate publication-approval workflow: status, priority and category summary counts update immediately. Personal details and responses remain private. This form does not replace existing evidence or provide new attachment uploads.
+
+## Spreadsheet register forms
+
+Procurement entry is under **Data Entry → Procurement** (`/data-entry.php?module=contracts`). It includes contract description, category, component, USD value, procurement status and state, plus existing delivery and payment tracking. Leave the reference blank to generate one. MIS Administrator and Procurement Officer can prepare drafts. Drafts retain the existing submission and approval workflow, including the prohibition on self-approval.
+
+GRM entry (`/grm-entry.php`) includes date received, gender, contact, state, site/location, grievance type, assigned officer, action taken and date resolved. Open is stored as the existing `received` status. Case references are generated automatically; days open are calculated from receipt to resolution or today in the private case details. Existing case details and audit history remain available.
+
+Before deploying these forms to another database, run `php scripts/enable-register-fields.php` with schema privileges (set `MIS_MIGRATION_USER` and `MIS_MIGRATION_PASS` if needed). This additive migration is safe to rerun. No spreadsheet cases or contracts are imported by these changes.

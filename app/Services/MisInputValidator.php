@@ -7,9 +7,11 @@ use InvalidArgumentException;
 
 final class MisInputValidator
 {
+    public const PROCUREMENT_CATEGORIES=['Goods','Works','Services (Non-Consulting)','Consultancy'];
+    public const PROCUREMENT_STATUSES=['Planned','Under Evaluation','Awarded','Ongoing','Completed','Cancelled','On Hold'];
     public const YEARS=['FY25','FY26','FY27','FY28','FY29','FY30'];
     public const PERIODS=['Annual','Q1','Q2','Q3','Q4'];
-    public const STATES=['National','Banadir','Puntland','Galmudug','Hirshabelle','South West State','Jubaland'];
+    public const STATES=['National','Banadir','Puntland','Galmudug','Hirshabelle','South West State','Jubaland','Somaliland'];
     public const COMPONENTS=['Component 1','Component 2','Component 3'];
 
     private static function choice(array $d,string $key,array $choices): string
@@ -63,8 +65,11 @@ final class MisInputValidator
     public static function normalize(string $module,array $d,MisRepository $repo): array
     {
         if ($module==='contracts') {
+            if (isset($d['reference_no']) && is_string($d['reference_no']) && trim($d['reference_no'])==='') $d['reference_no']='PROC-'.date('Ymd').'-'.strtoupper(bin2hex(random_bytes(4)));
             self::contract($d);
-            $out=[];
+            if (($d['category']??'')!=='') self::choice($d,'category',self::PROCUREMENT_CATEGORIES);
+            if (($d['procurement_status']??'')!=='') self::choice($d,'procurement_status',self::PROCUREMENT_STATUSES);
+            $out=['category'=>$d['category']??'', 'procurement_status'=>$d['procurement_status']??''];
             foreach(['reference_no'=>120,'title'=>500,'contractor'=>255,'notes'=>10000] as $key=>$max) $out[$key]=self::text($d,$key,$max);
             foreach(['contract_value','paid_amount','progress_percent'] as $key) $out[$key]=self::number($d,$key);
             foreach(['component','state','status'] as $key) $out[$key]=$d[$key];

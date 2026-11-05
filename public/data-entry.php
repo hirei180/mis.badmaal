@@ -10,7 +10,7 @@ requireAnyPermission(['mis.view','mis.indicators.enter','mis.contracts.enter','m
 $pdo=Database::connection();$repo=new MisRepository($pdo);$user=getCurrentUser();$uid=(int)($user['id']??0);
 $workflow=new MisWorkflowService($pdo,$uid,$user['permissions']??[]);
 $installed=$repo->isInstalled()&&$workflow->installed();
-$labels=['indicators'=>'PDO & IR Indicators','contracts'=>'Contract Management','finance'=>'Financial Management','review'=>'My submissions / Review','grm'=>'GRM'];
+$labels=['indicators'=>'PDO & IR Indicators','contracts'=>'Procurement','finance'=>'Financial Management','review'=>'My submissions / Review','grm'=>'GRM'];
 $modules=[];
 foreach(['indicators','contracts','finance'] as $module) if($workflow->canEnter($module)||$workflow->canApprove()||($module==='indicators'&&$workflow->canEnter('framework'))) $modules[]=$module;
 $modules[]='review';
@@ -100,7 +100,7 @@ function misFormEnd():void {echo '<p class="form-note">Saving creates a private 
 <?php if($revision):?><div class="notice">Creating a new draft from submission #<?=(int)$revision['id']?>. The previous submission remains in the history.</div><?php endif;?>
 <?php if($active==='review'): require dirname(__DIR__).'/views/review.php';
 elseif($active==='grm'):?>
-<section class="grm-bridge"><h2>Grievance case management</h2><p>Create and update cases, record responses, and review private evidence in the independent MIS.</p><a href="/grievances.php">Open GRM cases →</a></section>
+<section class="grm-bridge"><h2>Grievance case management</h2><p>Create and update cases, record responses, and review private evidence in the independent MIS.</p><div class="actions"><?php if(hasAnyPermission(['grm.manage'])):?><a class="button" href="/grm-entry.php">New GRM case</a><?php endif;?><a href="/grievances.php">Open GRM cases →</a></div></section>
 <?php else:?>
 <?php if($active==='indicators'):?>
 <form method="get" class="framework-filters records-card filters"><input type="hidden" name="module" value="indicators">
@@ -121,7 +121,8 @@ $options=[];foreach($indicatorOptions as $id=>$i)$options[(string)$id]=$i['code'
 <div class="two"><?php misField('target_value','Target (optional)','number');misField('actual_value','Actual result','number');?></div>
 <p class="form-note" id="unit-help"></p><p class="form-note">Leave target blank to use the framework target. Leave actual blank when no result has been reported. Enter 0 for a measured zero.</p>
 <?php misField('reported_at','Reporting date','date');misField('notes','Evidence / source reference and notes','textarea');misFormEnd();
-elseif($active==='contracts'): misFormStart('contracts');misField('reference_no','Contract reference','text',[],'',true);misField('title','Contract title','text',[],'',true);
+elseif($active==='contracts'): misFormStart('contracts');misField('reference_no','Contract reference (leave blank to generate)');misField('title','Contract description','text',[],'',true);
+misField('category','Procurement category','select',[''=>'Select category']+array_combine(Input::PROCUREMENT_CATEGORIES,Input::PROCUREMENT_CATEGORIES));misField('procurement_status','Procurement status','select',[''=>'Select status']+array_combine(Input::PROCUREMENT_STATUSES,Input::PROCUREMENT_STATUSES));
 misField('component','Component','select',Input::COMPONENTS,'Component 1',true);misField('state','State / administration','select',Input::STATES,'National',true);misField('contractor','Contractor');
 ?><div class="two"><?php misField('contract_value','Contract value (USD)','number',[],0,true);misField('paid_amount','Amount paid (USD)','number',[],0,true);?></div>
 <?php misField('progress_percent','Delivery progress (%)','number',[],0,true);?><div class="two"><?php misField('start_date','Start date','date');misField('end_date','End date','date');?></div>
@@ -136,8 +137,8 @@ $reportValues=$formValues;if($formModule!=='framework')$formValues=['baseline_va
 <div class="table-scroll"><table>
 <?php if($active==='indicators'):?><thead><tr><th>Indicator</th><th>Year / period</th><th>State</th><th>Target</th><th>Actual</th><?php if($canEnter):?><th>Action</th><?php endif;?></tr></thead><tbody>
 <?php foreach($filteredIndicators as $i):if(!isset($indicatorOptions[(int)$i['id']]))continue;?><tr><td><strong><?=$escape($i['code'])?></strong><br><?=$escape($i['name'])?></td><td><?=$escape(($i['fiscal_year']??'—').' / '.($i['reporting_period']??'—'))?></td><td><?=$escape($i['state']??'—')?></td><td><?=$escape($i['target_value']??'—')?></td><td><?=$escape($i['actual_value']??'Not reported')?></td><?php if($canEnter):?><td><?php if($i['period_id']):?><a href="data-entry.php?module=indicators&amp;source=<?=(int)$i['period_id']?>">Create draft</a><?php endif;?></td><?php endif;?></tr><?php endforeach;?>
-<?php elseif($active==='contracts'):?><thead><tr><th>Reference / title</th><th>State</th><th>Value</th><th>Paid</th><th>Progress</th><?php if($canEnter):?><th>Action</th><?php endif;?></tr></thead><tbody>
-<?php foreach($contracts as $c):?><tr><td><strong><?=$escape($c['reference_no'])?></strong><br><?=$escape($c['title'])?></td><td><?=$escape($c['state'])?></td><td>$<?=number_format((float)$c['contract_value'])?></td><td>$<?=number_format((float)$c['paid_amount'])?></td><td><?=$escape($c['progress_percent'])?>%</td><?php if($canEnter):?><td><a href="data-entry.php?module=contracts&amp;source=<?=(int)$c['id']?>">Create draft</a></td><?php endif;?></tr><?php endforeach;?>
+<?php elseif($active==='contracts'):?><thead><tr><th>Reference / title</th><th>Category / status</th><th>State</th><th>Value</th><th>Paid</th><th>Progress</th><?php if($canEnter):?><th>Action</th><?php endif;?></tr></thead><tbody>
+<?php foreach($contracts as $c):?><tr><td><strong><?=$escape($c['reference_no'])?></strong><br><?=$escape($c['title'])?></td><td><?=$escape(($c['category']??'') . ' / ' . ($c['procurement_status']??''))?></td><td><?=$escape($c['state'])?></td><td>$<?=number_format((float)$c['contract_value'])?></td><td>$<?=number_format((float)$c['paid_amount'])?></td><td><?=$escape($c['progress_percent'])?>%</td><?php if($canEnter):?><td><a href="data-entry.php?module=contracts&amp;source=<?=(int)$c['id']?>">Create draft</a></td><?php endif;?></tr><?php endforeach;?>
 <?php else:?><thead><tr><th>Period</th><th>Component</th><th>Budget</th><th>Committed</th><th>Disbursed</th><th>Expenditure</th><?php if($canEnter):?><th>Action</th><?php endif;?></tr></thead><tbody>
 <?php foreach($finances as $f):?><tr><td><?=$escape($f['fiscal_year'].' / '.$f['quarter'])?></td><td><?=$escape($f['component'])?></td><?php foreach(['budget_amount','committed_amount','disbursed_amount','expenditure_amount'] as $key):?><td>$<?=number_format((float)$f[$key])?></td><?php endforeach;?><?php if($canEnter):?><td><a href="data-entry.php?module=finance&amp;source=<?=(int)$f['id']?>">Create draft</a></td><?php endif;?></tr><?php endforeach;?>
 <?php endif;?></tbody></table></div>

@@ -6,9 +6,10 @@ use InvalidArgumentException;
 use RuntimeException;
 final class GrmCaseService
 {
+ public const TYPES=['Access / Licensing','Land / Resource Dispute','Compensation / Payment','Environmental Impact','Social / Community Impact','Labour / Working Conditions','GBV / SEA (Sensitive)','Fraud / Corruption','Service Delivery','Other'];
  public const STATUSES=['received','pending','under_review','resolved','closed','archived','submitted'];
  public const PRIORITIES=['low','medium','high','urgent'];
- public const FIELDS=['subject'=>255,'description'=>12000,'complainant_name'=>180,'email'=>190,'phone'=>60,'region'=>120,'district'=>120,'preferred_followup'=>60,'response'=>12000,'review_comments'=>12000];
+ public const FIELDS=['gender'=>60,'contact'=>190,'site_location'=>255,'grievance_type'=>120,'assigned_to'=>180,'subject'=>255,'description'=>12000,'complainant_name'=>180,'email'=>190,'phone'=>60,'region'=>120,'district'=>120,'preferred_followup'=>60,'response'=>12000,'review_comments'=>12000];
  public static function revision(array $case,array $categories):string {sort($categories);return hash('sha256',json_encode([$case,$categories],JSON_THROW_ON_ERROR));}
  public static function validate(array $input):array {
   $data=[];
@@ -19,6 +20,16 @@ final class GrmCaseService
   $date=$input['incident_date']??'';
   if(!is_string($date)||($date!==''&&(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date)||!($parsed=\DateTimeImmutable::createFromFormat('!Y-m-d',$date))||$parsed->format('Y-m-d')!==$date||$date>date('Y-m-d'))))throw new InvalidArgumentException('Enter a valid incident date that is not in the future.');
   $data['incident_date']=$date?:null;
+  foreach(['date_received','date_resolved'] as $key){
+   $v=$input[$key]??'';
+   if(!is_string($v)||($v!==''&&(!($parsed=\DateTimeImmutable::createFromFormat('!Y-m-d',$v))||$parsed->format('Y-m-d')!==$v||$v>date('Y-m-d'))))throw new InvalidArgumentException('Enter a valid '.str_replace('_',' ',$key).' that is not in the future.');
+   if($key==='date_received'&&array_key_exists($key,$input)&&$v==='')throw new InvalidArgumentException('Date received is required.');
+   $data[$key]=$v?:null;
+  }
+  if($data['date_resolved']&&(!$data['date_received']||$data['date_resolved']<$data['date_received']))throw new InvalidArgumentException('Resolution date must be on or after the date received.');
+  if($data['grievance_type']!==''&&!in_array($data['grievance_type'],self::TYPES,true))throw new InvalidArgumentException('Select a valid grievance type.');
+  if($data['date_received']&&in_array($data['status'],['resolved','closed'],true)&&!$data['date_resolved'])throw new InvalidArgumentException('Enter the date resolved for a resolved or closed case.');
+  if($data['date_resolved']&&!in_array($data['status'],['resolved','closed','archived'],true))throw new InvalidArgumentException('Use resolved or closed status when a resolution date is entered.');
   $people=$input['people_affected']??'';
   if(!is_string($people)||($people!==''&&(!ctype_digit($people)||strlen($people)>10||(float)$people>4294967295)))throw new InvalidArgumentException('People affected must be a non-negative whole number.');
   $data['people_affected']=$people===''?null:(int)$people;
