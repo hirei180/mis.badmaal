@@ -21,6 +21,11 @@ final class MisWorkflowService
         return in_array('mis.approve', $this->permissions, true);
     }
 
+    public function canApproveOwn(): bool
+    {
+        return $this->canApprove() && in_array('mis.approve.own', $this->permissions, true);
+    }
+
     public function installed(): bool
     {
         try { $this->pdo->query('SELECT 1 FROM mis_submissions LIMIT 1'); return true; }
@@ -72,8 +77,8 @@ final class MisWorkflowService
                 $s=$this->pdo->prepare("UPDATE mis_submissions SET status='submitted',submitted_at=NOW() WHERE id=?");
                 $s->execute([$id]);
             } else {
-                if (!$this->canApprove() || (int)$row['created_by']===$this->userId || $row['status']!=='submitted') {
-                    throw new RuntimeException('A different authorized reviewer must review a submitted record.');
+                if (!$this->canApprove() || ((int)$row['created_by']===$this->userId && !$this->canApproveOwn()) || $row['status']!=='submitted') {
+                    throw new RuntimeException('An authorized reviewer must review a submitted record. Self-approval requires explicit permission.');
                 }
                 if (!in_array($action,['approve','return'],true)) throw new RuntimeException('Invalid review action.');
                 if ($action==='return' && trim($note)==='') throw new RuntimeException('Explain which changes are needed.');

@@ -59,3 +59,11 @@ The production encrypted backup is `storage/backups/mis-20261105-113414-607f79.b
 Public dashboard and login return HTTP 200; anonymous form/register access redirects to login; private configuration and backup paths return HTTP 404.
 
 MIS Administrator now has procurement draft-entry permission; existing self-approval protection remains in force. Private rendering checks use existing authorized entry accounts, with isolated QA sessions.
+
+## Staff switching, self-approval and GRM cleanup — 5 November 2026
+
+Deployed 14 files for browser-session account switching, explicit self-approval permission and reversible GRM cleanup. The private release and previous source archive are in `/home/badmaal1/mis-deployment-20261105-staff-tools`. Predeployment source hashes, staged PHP syntax and installed checksums were verified. `scripts/enable-staff-tools.php` grants `mis.approve.own` and existing approval/GRM management permissions to MIS Administrator and M&E Officer. No database schema or database-user privilege changes were required.
+
+The encrypted predeployment backup is `storage/backups/mis-20261105-121916-63e654.backup`; authentication and contents were verified. All 19 grievances, 94 category links and 11 evidence records matched their original checksums after deployment. Staff authentication fields were unchanged. No existing cases were archived by deployment.
+
+The isolated HTTP suite passed account credential verification, switching and CSRF rotation, revoked-account rejection, both staff roles approving their own submissions, GRM preview/stale-confirmation handling, individual and bulk archive/restore, public aggregate updates and preservation of all evidence-file hashes.

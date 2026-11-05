@@ -21,10 +21,10 @@ try {
 // Public GRM data is aggregated from this independent MIS database only.
 try {
     $pdo=Database::connection();
-    $row=$pdo->query("SELECT COUNT(*) total,SUM(status IN ('resolved','closed')) resolved,SUM(status NOT IN ('resolved','closed')) pending,SUM(priority='urgent') urgent FROM grievances")->fetch();
+    $row=$pdo->query("SELECT COUNT(*) total,SUM(status IN ('resolved','closed')) resolved,SUM(status NOT IN ('resolved','closed')) pending,SUM(priority='urgent') urgent FROM grievances WHERE status<>'archived'")->fetch();
     $grm=array_map('intval',$row);
-    $grmSegments['priorities']=$pdo->query('SELECT priority,COUNT(*) total FROM grievances GROUP BY priority')->fetchAll(PDO::FETCH_KEY_PAIR);
-    $grmSegments['categories']=$pdo->query('SELECT category,COUNT(*) total FROM grievance_categories GROUP BY category ORDER BY total DESC')->fetchAll(PDO::FETCH_KEY_PAIR);
+    $grmSegments['priorities']=$pdo->query("SELECT priority,COUNT(*) total FROM grievances WHERE status<>'archived' GROUP BY priority")->fetchAll(PDO::FETCH_KEY_PAIR);
+    $grmSegments['categories']=$pdo->query("SELECT gc.category,COUNT(*) total FROM grievance_categories gc JOIN grievances g ON g.id=gc.grievance_id WHERE g.status<>'archived' GROUP BY gc.category ORDER BY total DESC")->fetchAll(PDO::FETCH_KEY_PAIR);
     $grmAvailable=true;
 } catch(Throwable $e) { error_log('MIS GRM summary unavailable: '.$e->getMessage()); }
 // Only reporting fields belong in the public payload; evidence notes and user IDs stay in Admin.

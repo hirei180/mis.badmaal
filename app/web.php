@@ -48,10 +48,14 @@ function nav(string $active=''):void {
  if(hasAnyPermission(['roles.manage']))$items['roles.php']='Roles';
  if(hasAnyPermission(['settings.manage']))$items['settings.php']='Settings';
  if(hasAnyPermission(['audit.view']))$items['audit.php']='Audit history';
+ $items['switch-user.php']='Switch user';
  $items['password.php']='Password';
  echo '<aside class="sidebar"><a class="brand" href="/dashboard.php"><img src="/assets/logo.png" alt="BADMAAL"><span>Management Information System</span></a><nav aria-label="MIS navigation">';
  foreach($items as $url=>$label)echo '<a '.($active===$url?'class="active" aria-current="page"':'').' href="/'.e($url).'">'.e($label).'</a>';
- echo '</nav><form method="post" action="/logout.php">'.csrfField().'<button class="logout">Sign out</button></form></aside>';
+ echo '</nav>';
+ $accounts=App\Services\AccountSessionService::available(db(),(int)(settings()['session_minutes']??60)*60);
+ foreach($accounts as $account)if((int)$account['id']!==(int)getCurrentUser()['id'])echo '<form method="post" action="/switch-user.php" class="quick-switch">'.csrfField().'<input type="hidden" name="action" value="switch"><input type="hidden" name="account_id" value="'.(int)$account['id'].'"><button>Switch to '.e($account['username']).'</button></form>';
+ echo '<form method="post" action="/logout.php">'.csrfField().'<button class="logout">Sign out</button></form></aside>';
 }
 function pageStart(string $title,string $active=''):void {
  $u=getCurrentUser();echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($title).' | BADMAAL MIS</title><link rel="stylesheet" href="/assets/app.css"></head><body>';nav($active);

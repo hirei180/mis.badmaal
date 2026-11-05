@@ -88,8 +88,9 @@ try:
     assert sum(payload['grmSegments']['categories'].values())==94
     for private_field in ['complainant_name','email','phone','evidence_path','review_comments']:assert private_field not in payload['grm']
     for module in ['pdo','ir','contracts','finance','grm']:assert 'id="module-'+module+'"' in pub
-    _,denied,_=request(officer,'/data-entry.php?module=review',{'csrf_token':csrf,'action':'workflow','submission_id':sid,'decision':'approve'})
-    assert 'different authorized reviewer' in denied
+    _,proc_review,_=request(proc,'/data-entry.php?module=review')
+    _,denied,_=request(proc,'/data-entry.php?module=review',{'csrf_token':token(proc_review),'action':'workflow','submission_id':sid,'decision':'approve'})
+    assert 'authorized reviewer' in denied
     _,html,_=request(admin,'/data-entry.php?module=review');csrfadmin=token(html)
     _,html,_=request(admin,'/data-entry.php?module=review',{'csrf_token':csrfadmin,'action':'workflow','submission_id':sid,'decision':'approve'})
     assert 'Submission updated successfully' in html
@@ -99,6 +100,15 @@ try:
     assert all('created_by' not in r and 'notes' not in r for r in payload['indicators'])
     # Last-actor attribution and approval activity remain accessible.
     assert 'me.officer' in html and 'mis.admin' in html
+    # Both staff accounts may approve their own submitted drafts.
+    for author,period in [(admin,'Q1'),(officer,'Q2')]:
+        _,entry,_=request(author,'/data-entry.php')
+        _,queue,_=request(author,'/data-entry.php',dict(draft,csrf_token=token(entry),fiscal_year='FY29',reporting_period=period))
+        own_id=int(re.search(r'Draft #(\d+) saved',queue)[1])
+        _,queue,_=request(author,'/data-entry.php?module=review',{'csrf_token':token(queue),'action':'workflow','submission_id':own_id,'decision':'submit'})
+        assert 'Approve and publish' in queue
+        _,queue,_=request(author,'/data-entry.php?module=review',{'csrf_token':token(queue),'action':'workflow','submission_id':own_id,'decision':'approve'})
+        assert 'Submission updated successfully' in queue
     # Account creation, first-login password change and session revocation.
     _,users_html,_=request(admin,'/users.php')
     role_id=int(re.search(r'<option value="(\d+)"[^>]*>M&amp;E Officer</option>',users_html)[1])
@@ -149,14 +159,67 @@ try:
     assert grm_payload['grm']['total']==20 and grm_payload['grm']['resolved']==1
     assert 'Private contact' not in pub and 'Private site' not in pub
     assert 'Private GRM integration case' not in pub and 'Private resolution' not in pub and 'Confidential grievance description' not in pub
-    _,history,_=request(admin,'/audit.php');assert 'grm_case_created' in history and 'grm_case_updated' in history
+    # GRM cleanup previews do not mutate data; archive/restore preserves evidence and counts.
+    assert request(proc,'/grm-cleanup.php')[0]==403
+    assert request(officer,'/grm-cleanup.php',{'action':'preview','scope':'all'})[0]==403
+    _,cleanup,_=request(officer,'/grm-cleanup.php')
+    selection={'csrf_token':token(cleanup),'action':'preview','scope':'selected','case_ids[]':str(case_id),'mode':'archive'}
+    _,preview,_=request(officer,'/grm-cleanup.php',selection);assert 'Archive 1 cases' in preview
+    assert dashboard_data(request(anon,'/?module=grm')[1])['grm']['total']==20
+    assert request(officer,'/grm-cleanup.php',{'csrf_token':'bad','action':'confirm'})[0]==403
+    # Reject stale confirmations after another edit.
+    _,edit,_=request(officer,'/grm-entry.php?id='+str(case_id))
+    current_revision=re.search(r'name="revision" value="([^"]+)"',edit)[1]
+    request(officer,'/grm-entry.php?id='+str(case_id),dict(update,revision=current_revision,response='Updated private resolution'))
+    _,stale,_=request(officer,'/grm-cleanup.php',{'csrf_token':token(preview),'action':'confirm'});assert 'selected case changed' in stale
+    _,preview,_=request(officer,'/grm-cleanup.php',selection)
+    _,cleared,url=request(officer,'/grm-cleanup.php',{'csrf_token':token(preview),'action':'confirm'})
+    assert 'case(s) archived' in cleared and 'Private GRM integration case' not in cleared
+    assert 'Private GRM integration case' in request(officer,'/grievances.php?status=archived')[1]
+    assert dashboard_data(request(anon,'/?module=grm')[1])['grm']['total']==19
+    _,cleanup,_=request(officer,'/grm-cleanup.php?mode=restore')
+    _,preview,_=request(officer,'/grm-cleanup.php',dict(selection,csrf_token=token(cleanup),mode='restore'))
+    _,restored,_=request(officer,'/grm-cleanup.php',{'csrf_token':token(preview),'action':'confirm'})
+    assert 'case(s) restored' in restored
+    payload=dashboard_data(request(anon,'/?module=grm')[1]);assert payload['grm']['total']==20 and payload['grm']['resolved']==1
+    for mode in ['archive','restore']:
+        _,cleanup,_=request(admin,'/grm-cleanup.php?mode='+mode)
+        _,preview,_=request(admin,'/grm-cleanup.php',{'csrf_token':token(cleanup),'action':'preview','scope':'all','mode':mode})
+        assert ('Archive 20 cases' if mode=='archive' else 'Restore 20 cases') in preview
+        request(admin,'/grm-cleanup.php',{'csrf_token':token(preview),'action':'confirm'})
+        payload=dashboard_data(request(anon,'/?module=grm')[1])
+        assert payload['grm']['total']==(0 if mode=='archive' else 20)
+        if mode=='archive':assert not payload['grmSegments']['categories'] and not payload['grmSegments']['priorities']
+    for evidence in evidence_files:
+        with officer.open(base+'/grm-evidence.php?id='+evidence.name.split('-')[0]) as r:
+            assert hashlib.sha256(r.read()).hexdigest()==hashlib.sha256(evidence.read_bytes()).hexdigest()
+    history=''.join(request(admin,'/audit.php?page='+str(p))[1] for p in [1,2,3]);assert 'grm_case_restored' in history and 'grm_case_cleared' in history
+    # Switching requires both account credentials, rotates CSRF, and respects role boundaries.
+    switcher=signin('mis.admin')
+    _,switch,_=request(switcher,'/switch-user.php');old_csrf=token(switch)
+    _,denied,_=request(switcher,'/switch-user.php',{'csrf_token':old_csrf,'action':'switch','account_id':'999999'});assert 'Sign in to this account' in denied
+    _,denied,_=request(switcher,'/switch-user.php',{'csrf_token':old_csrf,'action':'add','username':'me.officer','password':'wrong-password'});assert 'Invalid MIS' in denied
+    _,home,url=request(switcher,'/switch-user.php',{'csrf_token':old_csrf,'action':'add','username':'me.officer','password':fixture['password']});assert '/dashboard.php' in url
+    assert request(switcher,'/users.php')[0]==403
+    assert request(switcher,'/switch-user.php',{'csrf_token':old_csrf,'action':'switch','account_id':'999999'})[0]==403
+    _,switch,_=request(switcher,'/switch-user.php');admin_id=re.search(r'name="account_id" value="(\d+)"',switch)[1]
+    _,home,url=request(switcher,'/switch-user.php',{'csrf_token':token(switch),'action':'switch','account_id':admin_id});assert '/dashboard.php' in url
+    assert request(switcher,'/users.php')[0]==200
+    _,switch,_=request(switcher,'/switch-user.php');officer_id=re.search(r'name="account_id" value="(\d+)"',switch)[1]
+    revoke='require "app/bootstrap.php"; App\\Core\\Database::connection()->exec("UPDATE users SET session_version=session_version+1 WHERE username=\'me.officer\'");'
+    subprocess.run(['php','-r',revoke],cwd=ROOT,env=env,check=True)
+    _,denied,_=request(switcher,'/switch-user.php',{'csrf_token':token(switch),'action':'switch','account_id':officer_id});assert 'Sign in to this account' in denied
+    _,switch,_=request(switcher,'/switch-user.php')
+    request(switcher,'/logout.php',{'csrf_token':token(switch)})
+    assert '/login.php' in request(switcher,'/switch-user.php')[2]
+
     _,settings_html,_=request(admin,'/settings.php')
     _,_,url=request(admin,'/settings.php',{'csrf_token':token(settings_html),'organisation':'Isolated MIS','support_email':'','session_minutes':45})
     assert 'saved=1' in url
     assert request(admin,'/logout.php')[0]==405
     _,login,url=request(admin,'/logout.php',{'csrf_token':csrfadmin});assert '/login.php' in url
     assert '/login.php' in request(admin,'/users.php')[2]
-    print('HTTP checks passed: independent logins, archived-user denial, role boundaries, CSRF, filtering, whole-number validation, draft isolation, self-approval denial, approval/publication, audit and logout.')
+    print('HTTP checks passed: independent logins, archived-user denial, role boundaries, CSRF, filtering, whole-number validation, draft isolation, self-approval permissions, account switching, GRM archive/restore, approval/publication, audit and logout.')
 finally:
     server.terminate();server.wait(timeout=10);log.close()
     cleanup='''$c=json_decode(file_get_contents($argv[1]),true);$p=new PDO("mysql:host=".$c["db_host"],$c["db_user"],$c["db_pass"]);if(!preg_match("/^mis_test_[a-f0-9]+$/",$c["database"]))exit(1);$p->exec("DROP DATABASE `".$c["database"]."`");'''

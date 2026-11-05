@@ -10,7 +10,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
  else{
   $s=db()->prepare('SELECT * FROM users WHERE username=? AND status=\'active\' AND legacy_identity=0');$s->execute([$login]);$u=$s->fetch();
   if($u&&password_verify($password,$u['password_hash'])){
-   session_regenerate_id(true);$_SESSION=['mis_user_id'=>(int)$u['id'],'version'=>(int)$u['session_version'],'last_active'=>time()];
+   App\Services\AccountSessionService::activate($u);
    db()->prepare('UPDATE users SET last_login=NOW() WHERE id=?')->execute([$u['id']]);$throttle->clearAccount($login);audit('login');header('Location: /dashboard.php');exit;
   }
   $error='Invalid MIS username or password.';audit('login_failed',['login'=>$login]);

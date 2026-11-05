@@ -93,8 +93,16 @@ Case saves validate input and CSRF, reject stale edits, preserve original attrib
 
 ## Spreadsheet register forms
 
-Procurement entry is under **Data Entry → Procurement** (`/data-entry.php?module=contracts`). It includes contract description, category, component, USD value, procurement status and state, plus existing delivery and payment tracking. Leave the reference blank to generate one. MIS Administrator and Procurement Officer can prepare drafts. Drafts retain the existing submission and approval workflow, including the prohibition on self-approval.
+Procurement entry is under **Data Entry → Procurement** (`/data-entry.php?module=contracts`). It includes contract description, category, component, USD value, procurement status and state, plus existing delivery and payment tracking. Leave the reference blank to generate one. MIS Administrator and Procurement Officer can prepare drafts. Drafts retain the existing submission and approval workflow, including explicit permission checks for self-approval.
 
 GRM entry (`/grm-entry.php`) includes date received, gender, contact, state, site/location, grievance type, assigned officer, action taken and date resolved. Open is stored as the existing `received` status. Case references are generated automatically; days open are calculated from receipt to resolution or today in the private case details. Existing case details and audit history remain available.
 
 Before deploying these forms to another database, run `php scripts/enable-register-fields.php` with schema privileges (set `MIS_MIGRATION_USER` and `MIS_MIGRATION_PASS` if needed). This additive migration is safe to rerun. No spreadsheet cases or contracts are imported by these changes.
+
+## Staff switching, approvals and GRM cleanup
+
+Use **Switch user** to sign in to the second account once. The sidebar then provides a one-click switch between authenticated accounts. Each account retains its own permissions and expires after the configured inactivity period. Switching rotates the session ID and CSRF token, so forms left open under the previous user must be reloaded. Passwords are never retained for switching; signing out clears all linked accounts.
+
+Run `php scripts/enable-staff-tools.php` to grant MIS Administrator and M&E Officer approval and explicit `mis.approve.own` permission. Both may approve their own submitted drafts as requested. Approval history retains author and reviewer attribution. Other roles do not receive self-approval automatically.
+
+**GRM cases → Clear GRM register** lets either staff user review selected cases or all current cases before archiving. Archived cases leave the current register and public aggregate counts; details, evidence and audit history remain private and intact. **Restore archived cases** returns cases to their prior status. Confirmations expire after 15 minutes and reject cases changed since preview. Deploying this feature does not archive any existing cases.

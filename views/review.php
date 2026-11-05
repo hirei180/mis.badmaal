@@ -5,7 +5,7 @@ $escape=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
 <section class="records-card">
 <h2><?= $workflow->canApprove()?'Review dashboard submissions':'My submissions' ?></h2>
 <form method="get" class="mis-queue-filter"><input type="hidden" name="module" value="review"><label for="queue-status">Show submissions</label><select id="queue-status" name="status"><?php foreach([''=>'All statuses','submitted'=>'Awaiting review','draft'=>'Drafts','changes_requested'=>'Returned for changes','approved'=>'Approved'] as $value=>$label):?><option value="<?=$escape($value)?>" <?=$status===$value?'selected':''?>><?=$escape($label)?></option><?php endforeach;?></select><button>Filter</button></form>
-<p>Drafts are private to their author and reviewers. Approval publishes the record. The author cannot approve their own submission.</p>
+<p>Drafts are private to their author and reviewers. Approval publishes the record. <?= $workflow->canApproveOwn()?'You may approve your own submissions. Each approval records your identity.':'Self-approval requires explicit permission.' ?></p>
 <?php if(!$submissions):?><p>No submissions yet.</p><?php endif;?>
 <?php foreach($submissions as $submission): $payload=json_decode($submission['payload'],true); ?>
 <article class="mis-submission">
@@ -23,7 +23,7 @@ $escape=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
 <a href="/data-entry.php?module=<?= $submission['module']==='framework'?'indicators':$escape($submission['module']) ?>&amp;revise=<?=(int)$submission['id']?>">Create revised draft</a>
 <?php endif;?>
 <?php endif;?>
-<?php if($workflow->canApprove()&&(int)$submission['created_by']!==$uid&&$submission['status']==='submitted'):?>
+<?php if($workflow->canApprove()&&((int)$submission['created_by']!==$uid||$workflow->canApproveOwn())&&$submission['status']==='submitted'):?>
 <form method="post" action="/data-entry.php?module=review"><?=csrfField()?><input type="hidden" name="action" value="workflow"><input type="hidden" name="submission_id" value="<?=(int)$submission['id']?>"><label>Review note<textarea name="review_note" maxlength="10000" rows="2"><?=((int)($_POST['submission_id']??0)===(int)$submission['id'])?$escape($_POST['review_note']??''):''?></textarea></label><button name="decision" value="approve">Approve and publish</button> <button name="decision" value="return">Return for changes</button></form>
 <?php endif;?>
 <details class="mis-history"><summary>Activity history</summary><ol><?php foreach($workflow->history((int)$submission['id']) as $event):?><li><strong><?=$escape(ucfirst(str_replace('_',' ',$event['action'])))?></strong> · <?=$escape($event['username'])?> · <?=$escape($event['created_at'])?><?php if($event['note']):?><p><?=$escape($event['note'])?></p><?php endif;?></li><?php endforeach;?></ol></details>
