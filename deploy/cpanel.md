@@ -67,3 +67,9 @@ Deployed 14 files for browser-session account switching, explicit self-approval 
 The encrypted predeployment backup is `storage/backups/mis-20261105-121916-63e654.backup`; authentication and contents were verified. All 19 grievances, 94 category links and 11 evidence records matched their original checksums after deployment. Staff authentication fields were unchanged. No existing cases were archived by deployment.
 
 The isolated HTTP suite passed account credential verification, switching and CSRF rotation, revoked-account rejection, both staff roles approving their own submissions, GRM preview/stale-confirmation handling, individual and bulk archive/restore, public aggregate updates and preservation of all evidence-file hashes.
+
+## GRM testing-data cleanup — 5 November 2026
+
+At the owner's request, archived all 19 existing testing cases using the audited GRM cleanup service. The current live register is empty. Verified the public dashboard reports 0 total, pending, resolved and urgent cases, with empty category and priority summaries.
+
+Before cleanup, created and authenticated the encrypted backup `storage/backups/mis-20261105-202343-4cf382.backup`. Case details, all category links and evidence records were preserved for restoration; no records or evidence files were permanently deleted. Each archived case and the cleanup summary were recorded in the private audit history. This was a production data operation; no application code changed.
